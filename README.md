@@ -52,7 +52,6 @@ $env:STATENGINE_GROQ_API_KEY = "gsk_..."
 ```
 
 See the [Setup Guide](brain/28c86f20-d838-4563-bb2b-185f9de822cb/setup_guide.md) for the full workflow.
-Copyright (c) 2026 Ayomide-R
 
 ### 3. Run
 ```powershell
@@ -71,6 +70,8 @@ After running, find your ready-to-post content in the `StatEngine.Worker/drafts/
 ---
 
 ## 🛡️ License
+Copyright (c) 2026 **Ayomide-R**
+
 Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
 
 ---
