@@ -33,7 +33,7 @@ try
     builder.Services.AddSingleton<StatProviderFactory>();
     builder.Services.AddSingleton<IDisplayFormatter, LlmSocialFormatter>();
     builder.Services.AddSingleton<IImageGenerator, PollinationsImageGenerator>();
-    builder.Services.AddSingleton<IBroadcaster, TwitterBroadcaster>();
+    builder.Services.AddSingleton<IBroadcaster, FileDraftBroadcaster>();
 
     // Semantic Kernel
     builder.Services.AddSingleton(sp =>

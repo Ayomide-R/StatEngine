@@ -1,27 +1,36 @@
 using StatEngine.Core.Interfaces;
 using StatEngine.Core.Models;
+using Microsoft.Extensions.Logging;
 
 namespace StatEngine.Infrastructure.Providers;
 
 public class PollinationsImageGenerator : IImageGenerator
 {
     private readonly HttpClient _httpClient;
+    private readonly ILogger<PollinationsImageGenerator> _logger;
 
-    public PollinationsImageGenerator(HttpClient httpClient)
+    public PollinationsImageGenerator(HttpClient httpClient, ILogger<PollinationsImageGenerator> logger)
     {
         _httpClient = httpClient;
+        _logger = logger;
     }
 
     public async Task<string?> GenerateAsync(StatUpdate update)
     {
         try
         {
-            // Create a clean prompt from the refined content
-            var prompt = update.RefinedContent.Length > 200 
-                ? update.RefinedContent.Substring(0, 200) 
-                : update.RefinedContent;
+            // Create a clean, concise prompt for the image generator
+            // Remove hashtags, mentions, and keep it under 100 chars
+            var cleanPrompt = System.Text.RegularExpressions.Regex.Replace(update.RefinedContent, @"[#@]\w+", "").Trim();
+            cleanPrompt = System.Text.RegularExpressions.Regex.Replace(cleanPrompt, @"[^\w\s]", "");
             
-            // Encode the prompt for the URL
+            var prompt = cleanPrompt.Length > 100 
+                ? cleanPrompt.Substring(0, 100) 
+                : cleanPrompt;
+            
+            _logger.LogInformation("Generating image with prompt: {Prompt}", prompt);
+            
+            // Encode for URL
             var encodedPrompt = Uri.EscapeDataString(prompt);
             var imageUrl = $"https://image.pollinations.ai/prompt/{encodedPrompt}?width=1024&height=512&nologo=true";
 
