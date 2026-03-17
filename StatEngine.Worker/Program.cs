@@ -38,13 +38,29 @@ try
     builder.Services.AddSingleton(sp =>
     {
         var config = sp.GetRequiredService<IConfiguration>();
-        var apiKey = Environment.GetEnvironmentVariable("STATENGINE_OPENAI_API_KEY") ?? config["OpenAI:ApiKey"];
-        var modelId = Environment.GetEnvironmentVariable("STATENGINE_OPENAI_MODEL_ID") ?? config["OpenAI:ModelId"] ?? "gpt-4o-mini";
+        var apiKey = Environment.GetEnvironmentVariable("STATENGINE_LLM_API_KEY") ?? 
+                     Environment.GetEnvironmentVariable("STATENGINE_OPENAI_API_KEY") ?? 
+                     config["OpenAI:ApiKey"];
+        
+        var modelId = Environment.GetEnvironmentVariable("STATENGINE_LLM_MODEL_ID") ?? 
+                      Environment.GetEnvironmentVariable("STATENGINE_OPENAI_MODEL_ID") ?? 
+                      config["OpenAI:ModelId"] ?? "gpt-4o-mini";
+
+        var endpoint = Environment.GetEnvironmentVariable("STATENGINE_LLM_ENDPOINT") ?? 
+                       config["OpenAI:Endpoint"];
 
         var kernelBuilder = Kernel.CreateBuilder();
         if (!string.IsNullOrEmpty(apiKey))
         {
-            kernelBuilder.AddOpenAIChatCompletion(modelId, apiKey);
+            if (!string.IsNullOrEmpty(endpoint))
+            {
+                // Support for OpenRouter, Groq, MiniMax, etc. via OpenAI connector
+                kernelBuilder.AddOpenAIChatCompletion(modelId, apiKey, endpoint: new Uri(endpoint));
+            }
+            else
+            {
+                kernelBuilder.AddOpenAIChatCompletion(modelId, apiKey);
+            }
         }
         return kernelBuilder.Build();
     });
