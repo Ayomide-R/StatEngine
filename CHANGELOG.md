@@ -2,6 +2,17 @@
 
 All notable changes to the **StatEngine** project will be documented in this file.
 
+## [2.0.0] - 2026-03-17
+### Added
+- **100% Free AI (Groq)**: Integrated Groq (Llama 3.3) as the default LLM provider for zero-cost operation.
+- **Automated Image Generation**: Integrated Pollinations.ai to generate visuals for every statistic.
+- **Manual Draft Workflow**: Added `FileDraftBroadcaster` to save tweets and images locally, bypassing Twitter Free API limits.
+- **Enhanced Provider Scope**: Expanded to include Migration, Religion, and specialized domain pods.
+
+### Changed
+- Refactored `Worker.cs` to include the Image Generation and Local Draft step.
+- Optimized image prompts for better reliability and faster generation.
+
 ## [1.1.0] - 2026-03-17
 ### Added
 - **Multi-Domain Support**: Expand beyond finance and sports to include Education, Fashion, Lifestyle, Religion, and more.

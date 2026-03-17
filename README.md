@@ -11,11 +11,13 @@
 ## 🌟 Key Features
 
 -   **🔍 Multi-Domain Ingestion**: Seamlessly fetches data from Education, Fashion, Lifestyle, Finance, Sports, and more.
--   **🤖 AI Humanization**: Uses **Semantic Kernel** & **GPT-4o-mini** (or local Ollama) to transform raw data into witty, engaging social content.
--   **🛡️ Industrial Resilience**: Powered by **Polly** for exponential backoff, circuit breaking, and transient error handling.
--   **⚡ High Performance**: Built on .NET 10 with a "Producer-Consumer" workflow optimized for low resource footprint.
--   **📦 Decoupled Design**: Pure **Hexagonal Architecture** (Ports & Adapters) ensures the engine is future-proof and easy to extend.
--   **💾 Smart Deduplication**: Integrated **LiteDB** NoSQL cache prevents duplicate broadcasts.
+-   **🚀 100% Free AI (Groq)**: Uses **Groq** (Llama 3.3) for lightning-fast, zero-cost content refinement.
+-   **📷 Automated Image Generation**: Integrated **Pollinations.ai** to create relatable visuals for every statistic automatically.
+-   **📝 Manual Draft Workflow**: Saves tweets and images locally to bypass Twitter Free Tier API restrictions.
+-   **🛡️ Industrial Resilience**: Powered by **Polly** for exponential backoff and circuit breaking.
+-   **⚡ High Performance**: Built on .NET 10 with a "Producer-Consumer" workflow.
+-   **📦 Decoupled Design**: Pure **Hexagonal Architecture** for ultimate extensibility.
+-   **💾 Smart Deduplication**: Integrated **LiteDB** NoSQL cache prevents duplicate posts.
 
 ---
 
@@ -23,12 +25,13 @@
 
 ```mermaid
 graph TD
-    A[Sources: WorldBank, Sports, etc.] --> B(IStatProvider)
+    A[Sources: WorldBank, Fashion, etc.] --> B(IStatProvider)
     B --> C{StatEngine Worker}
     C --> D[ICache: LiteDB]
-    C --> E[IDisplayFormatter: LLM]
-    C --> F[IBroadcaster: Twitter]
-    F --> G[Social Platforms]
+    C --> E[IDisplayFormatter: Groq LLM]
+    C --> F[IImageGenerator: Pollinations]
+    C --> G[IBroadcaster: Local Drafts]
+    G --> H[Manual Upload to X]
 ```
 
 ---
@@ -37,24 +40,24 @@ graph TD
 
 ### 1. Requirements
 -   [.NET 10 SDK](https://dotnet.microsoft.com/download)
--   Twitter Developer Tokens
--   OpenAI API Key (or [Ollama](https://ollama.com/) for a 100% free experience)
+-   [Groq API Key](https://console.groq.com/) (100% FREE)
+-   Twitter Account (Manual posting ready!)
 
 ### 2. Configuration
-The engine is configured via **Environment Variables** for maximum security.
+The engine is configured via **Environment Variables** or `appsettings.Development.json`.
 
 ```powershell
-# Set your keys
-$env:STATENGINE_OPENAI_API_KEY = "sk-..."
-$env:STATENGINE_TWITTER_CONSUMER_KEY = "..."
+# Set your free Groq key
+$env:STATENGINE_GROQ_API_KEY = "gsk_..."
 ```
 
-See the [Setup Guide](brain/setup_guide.md) for a full step-by-step walkthrough.
+See the [Setup Guide](brain/28c86f20-d838-4563-bb2b-185f9de822cb/setup_guide.md) for the full workflow.
 
 ### 3. Run
 ```powershell
 dotnet run --project StatEngine.Worker
 ```
+After running, find your ready-to-post content in the `StatEngine.Worker/drafts/` folder!
 
 ---
 
