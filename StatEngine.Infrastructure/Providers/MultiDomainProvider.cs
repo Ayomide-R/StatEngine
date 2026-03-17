@@ -32,7 +32,10 @@ public class MultiDomainProvider : IStatProvider
             "Fashion" => $"Sustainability in fashion: {randomValue}% of luxury brands now use recycled fabrics.",
             "Lifestyle" => $"Health trends: {randomValue} million people are now practicing daily mindfulness globally.",
             "Religion" => $"Cultural stats: {randomValue} historical sites preserved under global heritage funds this year.",
-            "Migration" => $"Global mobility: {randomValue} specialized visas issued for tech workers this quarter.",
+            "Migration" => $"Global mobility: {randomValue} million specialized visas issued for talent mobility this quarter.",
+            "Trade" => $"Export trends: {randomValue} billion dollars worth of tech equipment traded in the last 30 days.",
+            "Business" => $"Corporate growth: {randomValue} new startups reached Unicorn status in emerging markets.",
+            "Public Figures" => $"Social impact: Top {randomValue} public figures signed the global sustainability pledge today.",
             _ => $"General Stat for {_topic}: {randomValue} units recorded."
         };
 
