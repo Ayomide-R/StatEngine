@@ -10,19 +10,22 @@ public class Worker : BackgroundService
     private readonly ICache _cache;
     private readonly IDisplayFormatter _formatter;
     private readonly IBroadcaster _broadcaster;
+    private readonly IImageGenerator _imageGenerator;
 
     public Worker(
         ILogger<Worker> logger,
         StatProviderFactory providerFactory,
         ICache cache,
         IDisplayFormatter formatter,
-        IBroadcaster broadcaster)
+        IBroadcaster broadcaster,
+        IImageGenerator imageGenerator)
     {
         _logger = logger;
         _providerFactory = providerFactory;
         _cache = cache;
         _formatter = formatter;
         _broadcaster = broadcaster;
+        _imageGenerator = imageGenerator;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -41,8 +44,7 @@ public class Worker : BackgroundService
 
                 // 2. Fetch latest data (Polly guarded via HttpClient in DI)
                 var update = await provider.GetLatestAsync();
-                _logger.LogInformation("Fetched data: {Id}", update.Id);
-
+                
                 // 3. Check if already posted
                 if (await _cache.IsNewAsync(update.Id))
                 {
@@ -50,17 +52,21 @@ public class Worker : BackgroundService
                     _logger.LogInformation("New content detected. Refining via LLM...");
                     update.RefinedContent = await _formatter.FormatAsync(update);
 
-                    // 5. Post to Twitter
-                    _logger.LogInformation("Broadcasting refined content...");
+                    // 5. Generate image
+                    _logger.LogInformation("Generating relatable image...");
+                    update.ImagePath = await _imageGenerator.GenerateAsync(update);
+
+                    // 6. Post to Twitter
+                    _logger.LogInformation("Broadcasting to social platforms...");
                     await _broadcaster.PostAsync(update);
 
-                    // 6. Mark as posted
+                    // 7. Mark as posted
                     await _cache.MarkAsPostedAsync(update.Id);
                     _logger.LogInformation("Cycle completed successfully.");
                 }
                 else
                 {
-                    _logger.LogInformation("Content {Id} already posted. Skipping.", update.Id);
+                    _logger.LogInformation("No new content from {ProviderName}.", provider.Name);
                 }
             }
             catch (Exception ex)
@@ -68,9 +74,7 @@ public class Worker : BackgroundService
                 _logger.LogError(ex, "Error occurred during ingestion cycle.");
             }
 
-            // Every 4 hours as requested, but for demo/test maybe shorter? 
-            // I'll stick to the request: "every 4 hours tasks" -> 4 hours = 14400000 ms
-            // For testing purposes, I'll use 1 minute if not overridden, but I'll put 4 hours here.
+            // Run every 4 hours
             await Task.Delay(TimeSpan.FromHours(4), stoppingToken);
         }
     }

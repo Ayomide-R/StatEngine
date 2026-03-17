@@ -32,35 +32,42 @@ try
 
     builder.Services.AddSingleton<StatProviderFactory>();
     builder.Services.AddSingleton<IDisplayFormatter, LlmSocialFormatter>();
+    builder.Services.AddSingleton<IImageGenerator, PollinationsImageGenerator>();
     builder.Services.AddSingleton<IBroadcaster, TwitterBroadcaster>();
 
     // Semantic Kernel
     builder.Services.AddSingleton(sp =>
     {
         var config = sp.GetRequiredService<IConfiguration>();
-        var apiKey = Environment.GetEnvironmentVariable("STATENGINE_LLM_API_KEY") ?? 
-                     Environment.GetEnvironmentVariable("STATENGINE_OPENAI_API_KEY") ?? 
-                     config["OpenAI:ApiKey"];
+        var apiKey = Environment.GetEnvironmentVariable("STATENGINE_GROQ_API_KEY") ?? 
+                     Environment.GetEnvironmentVariable("STATENGINE_LLM_API_KEY") ?? 
+                     config["Groq:ApiKey"];
         
-        var modelId = Environment.GetEnvironmentVariable("STATENGINE_LLM_MODEL_ID") ?? 
-                      Environment.GetEnvironmentVariable("STATENGINE_OPENAI_MODEL_ID") ?? 
-                      config["OpenAI:ModelId"] ?? "gpt-4o-mini";
+        var modelId = Environment.GetEnvironmentVariable("STATENGINE_GROQ_MODEL_ID") ?? 
+                      Environment.GetEnvironmentVariable("STATENGINE_LLM_MODEL_ID") ?? 
+                      config["Groq:ModelId"] ?? "llama-3.8b-8192";
 
-        var endpoint = Environment.GetEnvironmentVariable("STATENGINE_LLM_ENDPOINT") ?? 
-                       config["OpenAI:Endpoint"];
+        var endpoint = Environment.GetEnvironmentVariable("STATENGINE_GROQ_ENDPOINT") ?? 
+                       Environment.GetEnvironmentVariable("STATENGINE_LLM_ENDPOINT") ??
+                       config["Groq:Endpoint"] ?? "https://api.groq.com/openai/v1";
 
         var kernelBuilder = Kernel.CreateBuilder();
         if (!string.IsNullOrEmpty(apiKey))
         {
             if (!string.IsNullOrEmpty(endpoint))
             {
-                // Support for OpenRouter, Groq, MiniMax, etc. via OpenAI connector
-                kernelBuilder.AddOpenAIChatCompletion(modelId, apiKey, endpoint: new Uri(endpoint));
+                // Support for OpenRouter, Groq, MiniMax, etc. via custom HttpClient
+                var httpClient = new HttpClient { BaseAddress = new Uri(endpoint) };
+                kernelBuilder.AddOpenAIChatCompletion(modelId, apiKey, httpClient: httpClient);
             }
             else
             {
                 kernelBuilder.AddOpenAIChatCompletion(modelId, apiKey);
             }
+        }
+        else
+        {
+            Console.WriteLine("⚠️ WARNING: No AI API Key found (STATENGINE_GROQ_API_KEY). LLM refinement will be skipped or may fail.");
         }
         return kernelBuilder.Build();
     });
@@ -92,6 +99,7 @@ try
 
     AddResilientClient<WorldBankProvider>(builder.Services);
     AddResilientClient<MultiDomainProvider>(builder.Services);
+    AddResilientClient<PollinationsImageGenerator>(builder.Services);
 
     builder.Services.AddHostedService<Worker>();
 
