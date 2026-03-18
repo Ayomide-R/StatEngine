@@ -18,6 +18,7 @@
 -   **⚡ High Performance**: Built on .NET 10 with a "Producer-Consumer" workflow.
 -   **📦 Decoupled Design**: Pure **Hexagonal Architecture** for ultimate extensibility.
 -   **💾 Smart Deduplication**: Integrated **LiteDB** NoSQL cache prevents duplicate posts.
+-   **🧪 Robust Testing**: Comprehensive **xUnit** test suite ensuring high reliability.
 
 ---
 
@@ -59,6 +60,11 @@ dotnet run --project StatEngine.Worker
 ```
 After running, find your ready-to-post content in the `StatEngine.Worker/drafts/` folder!
 
+### 4. Run Tests
+```powershell
+dotnet test StatEngine.Tests/StatEngine.Tests.csproj
+```
+
 ---
 
 ## 📂 Project Structure
@@ -66,6 +72,7 @@ After running, find your ready-to-post content in the `StatEngine.Worker/drafts/
 -   **`StatEngine.Core`**: The Heart. Domain models and interface contracts.
 -   **`StatEngine.Infrastructure`**: The Muscle. Concrete implementations for APIs, DBs, and LLMs.
 -   **`StatEngine.Worker`**: The Brain. Orchestration and the main execution loop.
+-   **`StatEngine.Tests`**: The Proving Ground. xUnit tests verifying the accuracy of core components.
 
 ---
 

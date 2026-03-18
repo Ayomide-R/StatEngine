@@ -8,6 +8,7 @@ All notable changes to the **StatEngine** project will be documented in this fil
 - **Automated Image Generation**: Integrated Pollinations.ai to generate visuals for every statistic.
 - **Manual Draft Workflow**: Added `FileDraftBroadcaster` to save tweets and images locally, bypassing Twitter Free API limits.
 - **Enhanced Provider Scope**: Expanded to include Migration, Religion, and specialized domain pods.
+- **Robust Testing**: Added comprehensive **xUnit** test suite with **Moq** for ensuring core logic reliability.
 
 ### Changed
 - Refactored `Worker.cs` to include the Image Generation and Local Draft step.
