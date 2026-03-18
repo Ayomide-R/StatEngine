@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="StatEngine.Core/StatEngine.Core.csproj" />
   <Project Path="StatEngine.Infrastructure/StatEngine.Infrastructure.csproj" />
+  <Project Path="StatEngine.Tests/StatEngine.Tests.csproj" />
   <Project Path="StatEngine.Worker/StatEngine.Worker.csproj" />
 </Solution>
