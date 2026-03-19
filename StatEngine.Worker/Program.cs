@@ -29,6 +29,8 @@ try
     builder.Services.AddSingleton<IStatProvider>(sp => new MultiDomainProvider("Lifestyle", sp.GetRequiredService<HttpClient>()));
     builder.Services.AddSingleton<IStatProvider>(sp => new MultiDomainProvider("Religion", sp.GetRequiredService<HttpClient>()));
     builder.Services.AddSingleton<IStatProvider>(sp => new MultiDomainProvider("Migration", sp.GetRequiredService<HttpClient>()));
+    builder.Services.AddSingleton<IStatProvider, CryptoProvider>();
+    builder.Services.AddSingleton<IStatProvider, SportsProvider>();
 
     builder.Services.AddSingleton<StatProviderFactory>();
     builder.Services.AddSingleton<IDisplayFormatter, LlmSocialFormatter>();
@@ -99,6 +101,8 @@ try
 
     AddResilientClient<WorldBankProvider>(builder.Services);
     AddResilientClient<MultiDomainProvider>(builder.Services);
+    AddResilientClient<CryptoProvider>(builder.Services);
+    AddResilientClient<SportsProvider>(builder.Services);
     AddResilientClient<PollinationsImageGenerator>(builder.Services);
 
     builder.Services.AddHostedService<Worker>();
